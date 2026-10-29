@@ -1,9 +1,10 @@
 import streamDeck, { action, KeyDownEvent, SingletonAction } from "@elgato/streamdeck";
 
 import { NowPlayingAction } from "./now-playing";
+import { RateAction } from "./rate";
 import { Command, getState, PlayerState, send } from "./ytmusic";
 
-/** Intervalle de rafraîchissement des touches à deux états (Lecture/Pause, J'aime…). */
+/** Intervalle de rafraîchissement de l'icône Lecture/Pause. */
 const POLL_MS = 1000;
 /** Durée d'affichage du volume sur la touche après un appui. */
 const VOLUME_TITLE_MS = 2000;
@@ -112,33 +113,12 @@ class PlayPauseAction extends StatusAction {
 	}
 }
 
-/** J'aime : la touche s'allume (état 1) quand le titre en cours est aimé. Réappuyer annule. */
-@action({ UUID: "com.zionzion94.ytmusic.like" })
-class LikeAction extends StatusAction {
-	protected readonly command = "like";
-
-	protected stateFor(player: PlayerState | null): 0 | 1 {
-		return player?.like === "LIKE" ? 1 : 0;
-	}
-}
-
-/** Je n'aime pas : la touche s'allume (état 1) quand le titre en cours est marqué « Je n'aime pas ». */
-@action({ UUID: "com.zionzion94.ytmusic.dislike" })
-class DislikeAction extends StatusAction {
-	protected readonly command = "dislike";
-
-	protected stateFor(player: PlayerState | null): 0 | 1 {
-		return player?.like === "DISLIKE" ? 1 : 0;
-	}
-}
-
 streamDeck.actions.registerAction(new PlayPauseAction());
 streamDeck.actions.registerAction(new NextAction());
 streamDeck.actions.registerAction(new PreviousAction());
 streamDeck.actions.registerAction(new VolumeUpAction());
 streamDeck.actions.registerAction(new VolumeDownAction());
 streamDeck.actions.registerAction(new NowPlayingAction());
-streamDeck.actions.registerAction(new LikeAction());
-streamDeck.actions.registerAction(new DislikeAction());
+streamDeck.actions.registerAction(new RateAction());
 
 streamDeck.connect();

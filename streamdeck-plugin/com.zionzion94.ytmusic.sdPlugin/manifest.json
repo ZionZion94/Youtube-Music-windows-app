@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
 	"UUID": "com.zionzion94.ytmusic",
 	"Name": "YouTube Music",
-	"Version": "1.4.0.0",
+	"Version": "1.5.0.0",
 	"Author": "ZionZion94",
 	"Description": "Contrôle l'application de bureau YouTube Music : lecture/pause, titre suivant et précédent, volume, J'aime / Je n'aime pas, titre en cours avec pochette.",
 	"Category": "YouTube Music",
@@ -119,41 +119,16 @@
 			]
 		},
 		{
-			"Name": "J'aime",
-			"UUID": "com.zionzion94.ytmusic.like",
-			"Icon": "imgs/actions/like/icon",
-			"Tooltip": "Ajoute le titre en cours aux titres aimés (réappuyer pour annuler). La touche s'allume si le titre est aimé.",
+			"Name": "J'aime / Je n'aime pas",
+			"UUID": "com.zionzion94.ytmusic.rate",
+			"Icon": "imgs/actions/rate/icon",
+			"Tooltip": "Appui court : J'aime. Appui long (½ s) : Je n'aime pas. Réappuyer annule. La touche affiche l'avis sur le titre en cours.",
 			"Controllers": [
 				"Keypad"
 			],
-			"DisableAutomaticStates": true,
 			"States": [
 				{
-					"Image": "imgs/actions/like/off",
-					"ShowTitle": false
-				},
-				{
-					"Image": "imgs/actions/like/on",
-					"ShowTitle": false
-				}
-			]
-		},
-		{
-			"Name": "Je n'aime pas",
-			"UUID": "com.zionzion94.ytmusic.dislike",
-			"Icon": "imgs/actions/dislike/icon",
-			"Tooltip": "Marque le titre en cours « Je n'aime pas » (réappuyer pour annuler). La touche s'allume si c'est le cas.",
-			"Controllers": [
-				"Keypad"
-			],
-			"DisableAutomaticStates": true,
-			"States": [
-				{
-					"Image": "imgs/actions/dislike/off",
-					"ShowTitle": false
-				},
-				{
-					"Image": "imgs/actions/dislike/on",
+					"Image": "imgs/actions/rate/neutral",
 					"ShowTitle": false
 				}
 			]
