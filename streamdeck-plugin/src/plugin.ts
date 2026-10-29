@@ -2,12 +2,11 @@ import streamDeck, { action, KeyDownEvent, SingletonAction } from "@elgato/strea
 
 import { NowPlayingAction } from "./now-playing";
 import { RateAction } from "./rate";
+import { VolumeDownAction, VolumeUpAction } from "./volume";
 import { Command, getState, PlayerState, send } from "./ytmusic";
 
 /** Intervalle de rafraîchissement de l'icône Lecture/Pause. */
 const POLL_MS = 1000;
-/** Durée d'affichage du volume sur la touche après un appui. */
-const VOLUME_TITLE_MS = 2000;
 
 /** Bouton qui envoie une commande à l'application. */
 abstract class CommandAction extends SingletonAction {
@@ -29,34 +28,6 @@ class NextAction extends CommandAction {
 @action({ UUID: "com.zionzion94.ytmusic.previous" })
 class PreviousAction extends CommandAction {
 	protected readonly command = "prev";
-}
-
-/** Bouton de volume : affiche le nouveau volume (ex. « 60 % ») quelques secondes sur la touche. */
-abstract class VolumeAction extends CommandAction {
-	#clearTimer: NodeJS.Timeout | undefined;
-
-	override async onKeyDown(ev: KeyDownEvent): Promise<void> {
-		await super.onKeyDown(ev);
-		// Laisse le temps à l'application de publier le nouveau volume.
-		await new Promise((resolve) => setTimeout(resolve, 250));
-		const volume = (await getState())?.volume;
-		if (volume == null || !ev.action.isKey()) return;
-
-		const key = ev.action;
-		await key.setTitle(`${volume} %`);
-		clearTimeout(this.#clearTimer);
-		this.#clearTimer = setTimeout(() => void key.setTitle(""), VOLUME_TITLE_MS);
-	}
-}
-
-@action({ UUID: "com.zionzion94.ytmusic.volumeup" })
-class VolumeUpAction extends VolumeAction {
-	protected readonly command = "volup";
-}
-
-@action({ UUID: "com.zionzion94.ytmusic.volumedown" })
-class VolumeDownAction extends VolumeAction {
-	protected readonly command = "voldown";
 }
 
 /**

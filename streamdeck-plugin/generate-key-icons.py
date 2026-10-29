@@ -32,10 +32,10 @@ def key(kind):
     for y in range(S):
         k=y/(S-1)
         d.line([(0,y),(S,y)],fill=tuple(int(a+(b-a)*k) for a,b in zip(RED_TOP,RED_BOTTOM))+(255,))
-    # Les boutons de volume affichent le volume en bas : symbole un peu remonté.
-    cy=S*0.44 if kind.startswith("vol") else S/2
+    # Les boutons de volume affichent le pourcentage et une jauge en bas : symbole remonté.
+    cy=S*0.36 if kind.startswith("vol") else S/2
     dx=S*0.03 if kind=="play" else 0
-    r=S*0.31 if kind.startswith("vol") else S*0.24
+    r=S*0.27 if kind.startswith("vol") else S*0.24
     glyph(d,kind,S/2+dx,cy,r,WHITE)
     return img
 
