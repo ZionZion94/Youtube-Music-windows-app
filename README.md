@@ -23,6 +23,8 @@ Connectez-vous une fois avec votre compte Google (YouTube Premium inclus) et la 
 - Fermeture automatique du message « Vous êtes toujours là ? » qui coupe la musique.
 - Les liens externes s'ouvrent dans votre navigateur par défaut.
 - Le titre en cours s'affiche dans la barre des tâches et l'infobulle de l'icône.
+- **Panneau multimédia de Windows** : titre, artiste et pochette apparaissent dans la fenêtre de contrôle
+  du volume (et les paramètres rapides de Windows 11), avec les boutons ⏮ ⏯ ⏭.
 - **Plugin Stream Deck** : boutons Lecture/Pause, Titre suivant, Titre précédent, Volume +/− (voir plus bas).
 
 ## Installation
@@ -42,7 +44,7 @@ Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 5 bout
 - **Lecture / Pause** — l'icône passe de ▶ à ❚❚ selon l'état réel du lecteur ;
 - **Titre précédent** ;
 - **Titre suivant** ;
-- **Volume +** / **Volume −** — par pas de 10 %, le nouveau volume s'affiche 2 secondes sur la touche.
+- **Volume +** / **Volume −** — par pas de 5 %, le nouveau volume s'affiche 2 secondes sur la touche.
 
 Si l'application n'est pas lancée, la touche affiche un triangle jaune.
 
@@ -74,5 +76,6 @@ npx @tauri-apps/cli@2 build   # créer l'installeur dans src-tauri\target\releas
 | `src-tauri/src/main.rs` | Fenêtre, icône de notification, touches multimédia, gestion mémoire |
 | `src-tauri/src/inject.js` | Script injecté dans YouTube Music (contrôles de lecture, petites améliorations) |
 | `src-tauri/src/api.rs` | API locale utilisée par le plugin Stream Deck |
+| `src-tauri/src/smtc.rs` | Intégration au panneau multimédia de Windows |
 | `src-tauri/tauri.conf.json` | Configuration de l'application et de l'installeur |
 | `streamdeck-plugin/` | Plugin Stream Deck (code dans `src/`, manifeste et icônes dans `com.zionzion94.ytmusic.sdPlugin/`) |

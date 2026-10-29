@@ -5,12 +5,12 @@
 //! sans autorisation CORS (que l'on ne donne jamais), il ne peut donc pas
 //! piloter la musique à votre place.
 //!
-//! - `GET  /state`  → `{"playing":true,"title":"…","artist":"…","volume":50}`
+//! - `GET  /state`  → `{"playing":true,"title":"…","artist":"…","art":"https://…","volume":50}`
 //! - `POST /toggle` → lecture / pause
 //! - `POST /next`   → titre suivant
 //! - `POST /prev`   → titre précédent
-//! - `POST /volup`  → volume +10 %
-//! - `POST /voldown`→ volume -10 %
+//! - `POST /volup`  → volume +5 %
+//! - `POST /voldown`→ volume -5 %
 
 use std::io::{BufRead, BufReader, Write};
 use std::net::{TcpListener, TcpStream};

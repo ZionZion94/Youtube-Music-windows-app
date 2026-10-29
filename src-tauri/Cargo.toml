@@ -1,6 +1,6 @@
 [package]
 name = "ytmusic-desktop"
-version = "1.2.0"
+version = "1.3.0"
 description = "Client de bureau léger pour YouTube Music"
 edition = "2021"
 
@@ -18,6 +18,13 @@ serde_json = "1"
 [target.'cfg(windows)'.dependencies]
 webview2-com = "0.39"
 windows-core = "0.62"
+windows = { version = "0.62", features = [
+  "Foundation",
+  "Media",
+  "Storage_Streams",
+  "Win32_Foundation",
+  "Win32_System_WinRT",
+] }
 
 [profile.release]
 codegen-units = 1

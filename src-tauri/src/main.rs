@@ -2,6 +2,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod api;
+#[cfg(windows)]
+mod smtc;
 
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},
@@ -23,8 +25,9 @@ const INIT_JS: &str = include_str!("inject.js");
 
 /// Arguments Chromium passés à WebView2.
 /// - On garde les valeurs par défaut de Tauri (msWebOOUI, msPdfOOUI, msSmartScreenProtection).
-/// - HardwareMediaKeyHandling est désactivé : les touches multimédia sont gérées par
-///   l'application elle-même (raccourcis globaux), ce qui évite un double déclenchement.
+/// - HardwareMediaKeyHandling est désactivé : les touches multimédia (raccourcis globaux)
+///   et le panneau multimédia de Windows (smtc.rs) sont gérés par l'application
+///   elle-même, ce qui évite un double déclenchement et une double entrée dans le panneau.
 /// - Translate / fonctionnalités Edge inutiles désactivées pour économiser de la mémoire.
 const BROWSER_ARGS: &str = "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection,\
 HardwareMediaKeyHandling,Translate,msEdgeTranslate,msShoppingExp,msEdgeShoppingUI,\
@@ -114,7 +117,8 @@ fn set_low_memory(win: &WebviewWindow, low: bool) {
 fn set_low_memory(_win: &WebviewWindow, _low: bool) {}
 
 /// Reçoit l'état publié par la page : le garde pour le Stream Deck et affiche
-/// le titre en cours dans la barre des tâches et l'infobulle de l'icône.
+/// le titre en cours dans la barre des tâches, l'infobulle de l'icône et le
+/// panneau multimédia de Windows.
 fn on_player_state(app: &AppHandle, win: &WebviewWindow, json: &str) {
     let Ok(state) = serde_json::from_str::<serde_json::Value>(json) else { return };
     api::set_state(json);
@@ -132,6 +136,14 @@ fn on_player_state(app: &AppHandle, win: &WebviewWindow, json: &str) {
         let tooltip: String = label.chars().take(120).collect();
         let _ = tray.set_tooltip(Some(tooltip));
     }
+
+    #[cfg(windows)]
+    smtc::update(
+        state["playing"].as_bool().unwrap_or(false),
+        title,
+        artist,
+        state["art"].as_str().unwrap_or(""),
+    );
 }
 
 fn create_main_window(app: &AppHandle) -> tauri::Result<WebviewWindow> {
@@ -173,6 +185,11 @@ fn create_main_window(app: &AppHandle) -> tauri::Result<WebviewWindow> {
         WindowEvent::Focused(true) => set_low_memory(&win_for_events, false),
         _ => {}
     });
+
+    #[cfg(windows)]
+    if let Err(e) = smtc::init(app, &win) {
+        eprintln!("panneau multimédia Windows indisponible : {e}");
+    }
 
     win.show()?;
     Ok(win)
