@@ -8,9 +8,11 @@ export type PlayerState = {
 	playing: boolean;
 	title: string;
 	artist: string;
+	/** Volume de 0 à 100 ; `null` tant que le lecteur n'est pas prêt. */
+	volume: number | null;
 };
 
-export type Command = "toggle" | "next" | "prev";
+export type Command = "toggle" | "next" | "prev" | "volup" | "voldown";
 
 /** Envoie une commande ; renvoie `false` si l'application n'est pas lancée. */
 export async function send(command: Command): Promise<boolean> {

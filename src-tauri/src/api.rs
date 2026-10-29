@@ -5,10 +5,12 @@
 //! sans autorisation CORS (que l'on ne donne jamais), il ne peut donc pas
 //! piloter la musique à votre place.
 //!
-//! - `GET  /state`  → `{"playing":true,"title":"…","artist":"…"}`
+//! - `GET  /state`  → `{"playing":true,"title":"…","artist":"…","volume":50}`
 //! - `POST /toggle` → lecture / pause
 //! - `POST /next`   → titre suivant
 //! - `POST /prev`   → titre précédent
+//! - `POST /volup`  → volume +10 %
+//! - `POST /voldown`→ volume -10 %
 
 use std::io::{BufRead, BufReader, Write};
 use std::net::{TcpListener, TcpStream};
@@ -32,7 +34,7 @@ pub fn set_state(json: &str) {
 fn state() -> String {
     match STATE.lock() {
         Ok(s) if !s.is_empty() => s.clone(),
-        _ => r#"{"playing":false,"title":"","artist":""}"#.to_string(),
+        _ => r#"{"playing":false,"title":"","artist":"","volume":null}"#.to_string(),
     }
 }
 
@@ -84,6 +86,8 @@ fn handle(app: &AppHandle, mut stream: TcpStream) -> std::io::Result<()> {
             ("POST", "/toggle") => command(app, "toggle"),
             ("POST", "/next") => command(app, "next"),
             ("POST", "/prev") => command(app, "prev"),
+            ("POST", "/volup") => command(app, "volup"),
+            ("POST", "/voldown") => command(app, "voldown"),
             _ => ("404 Not Found", String::new()),
         }
     };

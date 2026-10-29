@@ -23,7 +23,7 @@ Connectez-vous une fois avec votre compte Google (YouTube Premium inclus) et la 
 - Fermeture automatique du message « Vous êtes toujours là ? » qui coupe la musique.
 - Les liens externes s'ouvrent dans votre navigateur par défaut.
 - Le titre en cours s'affiche dans la barre des tâches et l'infobulle de l'icône.
-- **Plugin Stream Deck** : boutons Lecture/Pause, Titre suivant, Titre précédent (voir plus bas).
+- **Plugin Stream Deck** : boutons Lecture/Pause, Titre suivant, Titre précédent, Volume +/− (voir plus bas).
 
 ## Installation
 
@@ -37,11 +37,12 @@ Connectez-vous une fois avec votre compte Google (YouTube Premium inclus) et la 
 
 ## Plugin Stream Deck
 
-Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 3 boutons :
+Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 5 boutons :
 
 - **Lecture / Pause** — l'icône passe de ▶ à ❚❚ selon l'état réel du lecteur ;
 - **Titre précédent** ;
-- **Titre suivant**.
+- **Titre suivant** ;
+- **Volume +** / **Volume −** — par pas de 10 %, le nouveau volume s'affiche 2 secondes sur la touche.
 
 Si l'application n'est pas lancée, la touche affiche un triangle jaune.
 
@@ -51,7 +52,7 @@ Si l'application n'est pas lancée, la touche affiche un triangle jaune.
 2. Double-cliquer sur `com.zionzion94.ytmusic.streamDeckPlugin` : le logiciel Stream Deck l'installe.
 3. Glisser les boutons de la catégorie **YouTube Music** sur vos touches.
 
-L'application YouTube Music doit être en version 1.1.0 ou plus récente. Elle expose pour cela une petite
+L'application YouTube Music doit être en version 1.2.0 ou plus récente (1.1.0 sans les boutons de volume). Elle expose pour cela une petite
 API locale sur `127.0.0.1:48723`, inaccessible depuis le réseau et depuis les sites web.
 
 Pour compiler le plugin : `cd streamdeck-plugin && npm ci && npm run pack` (résultat dans `streamdeck-plugin/dist/`).
