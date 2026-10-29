@@ -1,4 +1,4 @@
-import { action, KeyDownEvent, SingletonAction } from "@elgato/streamdeck";
+import streamDeck, { action, KeyDownEvent, SingletonAction } from "@elgato/streamdeck";
 
 import { getState, PlayerState, send } from "./ytmusic";
 
@@ -38,13 +38,17 @@ async function loadArt(url: string): Promise<string | null> {
 	if (cached !== undefined) return cached;
 	try {
 		const res = await fetch(smallArtUrl(url), { signal: AbortSignal.timeout(4000) });
-		if (!res.ok) return null;
+		if (!res.ok) {
+			streamDeck.logger.warn(`Pochette indisponible (HTTP ${res.status}) : ${url}`);
+			return null;
+		}
 		const type = res.headers.get("content-type") ?? "image/jpeg";
 		const data = `data:${type};base64,${Buffer.from(await res.arrayBuffer()).toString("base64")}`;
 		if (artCache.size >= 5) artCache.delete(artCache.keys().next().value!);
 		artCache.set(url, data);
 		return data;
-	} catch {
+	} catch (e) {
+		streamDeck.logger.warn(`Pochette indisponible (${e instanceof Error ? e.message : String(e)}) : ${url}`);
 		return null;
 	}
 }
@@ -132,6 +136,9 @@ export class NowPlayingAction extends SingletonAction {
 		const key = JSON.stringify(view && [view.title, view.artist, view.playing, view.art?.length]);
 		if (key === this.#key) return;
 		if (view?.title !== this.#view?.title) {
+			streamDeck.logger.info(
+				view ? `Titre en cours : ${view.title} — ${view.artist} (pochette : ${view.art ? "oui" : "non"})` : "Aucune lecture",
+			);
 			this.#offset = 0;
 			this.#pauseTicks = SCROLL_PAUSE_TICKS;
 		}
@@ -161,7 +168,8 @@ export class NowPlayingAction extends SingletonAction {
 	}
 
 	private async draw(): Promise<void> {
-		const image = render(this.#view, this.#offset);
+		// Data URL avec type déclaré : format d'image accepté par Stream Deck dans tous les cas.
+		const image = `data:image/svg+xml;base64,${Buffer.from(render(this.#view, this.#offset)).toString("base64")}`;
 		await Promise.all(this.actions.map((a) => (a.isKey() ? a.setImage(image) : undefined)));
 	}
 }
