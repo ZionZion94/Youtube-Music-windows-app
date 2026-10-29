@@ -17,11 +17,13 @@ export type PlayerState = {
 	artist: string;
 	/** URL de la pochette (application v1.3.0 ou plus récente). */
 	art?: string;
+	/** Avis sur le titre en cours (application v1.4.0 ou plus récente). */
+	like?: "LIKE" | "DISLIKE" | "INDIFFERENT";
 	/** Volume de 0 à 100 ; `null` tant que le lecteur n'est pas prêt. */
 	volume: number | null;
 };
 
-export type Command = "toggle" | "next" | "prev" | "volup" | "voldown";
+export type Command = "toggle" | "next" | "prev" | "volup" | "voldown" | "like" | "dislike";
 
 function baseUrl(): string {
 	let port = DEFAULT_PORT;

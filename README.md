@@ -25,7 +25,8 @@ Connectez-vous une fois avec votre compte Google (YouTube Premium inclus) et la 
 - Le titre en cours s'affiche dans la barre des tâches et l'infobulle de l'icône.
 - **Panneau multimédia de Windows** : titre, artiste et pochette apparaissent dans la fenêtre de contrôle
   du volume (et les paramètres rapides de Windows 11), avec les boutons ⏮ ⏯ ⏭.
-- **Plugin Stream Deck** : boutons Lecture/Pause, Titre suivant, Titre précédent, Volume +/− (voir plus bas).
+- **Plugin Stream Deck** : Lecture/Pause, Titre suivant/précédent, Volume +/−, J'aime / Je n'aime pas,
+  Titre en cours avec pochette (voir plus bas).
 
 ## Installation
 
@@ -39,12 +40,16 @@ Connectez-vous une fois avec votre compte Google (YouTube Premium inclus) et la 
 
 ## Plugin Stream Deck
 
-Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 5 boutons :
+Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 8 boutons :
 
 - **Lecture / Pause** — l'icône passe de ▶ à ❚❚ selon l'état réel du lecteur ;
 - **Titre précédent** ;
 - **Titre suivant** ;
-- **Volume +** / **Volume −** — par pas de 5 %, le nouveau volume s'affiche 2 secondes sur la touche.
+- **Volume +** / **Volume −** — par pas de 5 %, le nouveau volume s'affiche 2 secondes sur la touche ;
+- **J'aime** / **Je n'aime pas** — la touche s'allume en rouge selon l'avis sur le titre en cours ;
+  réappuyer annule ;
+- **Titre en cours** — touche dynamique : pochette, titre (qui défile s'il est trop long) et artiste ;
+  un appui met en lecture / en pause.
 
 Si l'application n'est pas lancée, la touche affiche un triangle jaune. Le menu de l'icône de l'application
 indique « Stream Deck : prêt (port …) » quand la liaison est disponible ; la cause d'un échec est écrite dans
@@ -56,7 +61,8 @@ indique « Stream Deck : prêt (port …) » quand la liaison est disponible ; l
 2. Double-cliquer sur `com.zionzion94.ytmusic.streamDeckPlugin` : le logiciel Stream Deck l'installe.
 3. Glisser les boutons de la catégorie **YouTube Music** sur vos touches.
 
-L'application YouTube Music doit être en version 1.2.0 ou plus récente (1.1.0 sans les boutons de volume). Elle expose pour cela une petite
+L'application YouTube Music doit être en version 1.4.0 ou plus récente pour tous les boutons
+(1.3.0 suffit pour la pochette, 1.2.0 pour le volume). Elle expose pour cela une petite
 API locale sur `127.0.0.1:48723` (ou un port suivant s'il est réservé par Windows), inaccessible depuis le réseau
 et depuis les sites web.
 

@@ -41,6 +41,25 @@
     publish();
   }
 
+  // Boutons J'aime / Je n'aime pas de la barre de lecture.
+  function likeRenderer() {
+    return document.querySelector("ytmusic-player-bar ytmusic-like-button-renderer");
+  }
+
+  function likeStatus() {
+    var r = likeRenderer();
+    return (r && r.getAttribute("like-status")) || "INDIFFERENT";
+  }
+
+  // kind : "like" ou "dislike". Cliquer à nouveau sur un bouton actif l'annule.
+  function clickLike(kind) {
+    var r = likeRenderer();
+    if (!r) return;
+    var btn = r.querySelector("#button-shape-" + kind + " button") || r.querySelector("." + kind);
+    if (btn) btn.click();
+    setTimeout(publish, 300);
+  }
+
   // Contrôles appelés depuis l'application (touches multimédia, icône de notification).
   window.__ytmd = function (action) {
     switch (action) {
@@ -64,6 +83,12 @@
       case "prev":
         click("ytmusic-player-bar .previous-button");
         break;
+      case "like":
+        clickLike("like");
+        break;
+      case "dislike":
+        clickLike("dislike");
+        break;
       case "volup":
         changeVolume(5);
         break;
@@ -85,6 +110,7 @@
       title: (m && m.title) || "",
       artist: (m && m.artist) || "",
       art: art,
+      like: likeStatus(),
       volume: volume()
     };
     var t = "YTMD:" + JSON.stringify(state);
