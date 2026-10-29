@@ -12,6 +12,35 @@
     return document.querySelector("video");
   }
 
+  // Lecteur YouTube : son API garde le volume synchronisé avec l'interface.
+  function player() {
+    var p = document.getElementById("movie_player");
+    return p && p.getVolume && p.setVolume ? p : null;
+  }
+
+  function volume() {
+    var p = player();
+    if (p) return Math.round(p.getVolume());
+    var v = video();
+    return v ? Math.round(v.volume * 100) : null;
+  }
+
+  function changeVolume(delta) {
+    var current = volume();
+    if (current === null) return;
+    var target = Math.max(0, Math.min(100, current + delta));
+    var p = player();
+    if (p) {
+      if (p.isMuted && p.isMuted()) p.unMute();
+      p.setVolume(target);
+      var slider = document.querySelector("ytmusic-player-bar #volume-slider");
+      if (slider) slider.value = target;
+    } else {
+      video().volume = target / 100;
+    }
+    publish();
+  }
+
   // Contrôles appelés depuis l'application (touches multimédia, icône de notification).
   window.__ytmd = function (action) {
     switch (action) {
@@ -31,6 +60,12 @@
       case "prev":
         click("ytmusic-player-bar .previous-button");
         break;
+      case "volup":
+        changeVolume(10);
+        break;
+      case "voldown":
+        changeVolume(-10);
+        break;
     }
   };
 
@@ -42,12 +77,13 @@
     var state = {
       playing: !!(v && !v.paused && !v.ended),
       title: (m && m.title) || "",
-      artist: (m && m.artist) || ""
+      artist: (m && m.artist) || "",
+      volume: volume()
     };
     var t = "YTMD:" + JSON.stringify(state);
     if (document.title !== t) document.title = t;
   }
-  ["play", "pause", "ended", "loadeddata"].forEach(function (name) {
+  ["play", "pause", "ended", "loadeddata", "volumechange"].forEach(function (name) {
     // Les événements média ne remontent pas : on les capte en phase de capture.
     document.addEventListener(name, function () { setTimeout(publish, 50); }, true);
   });
