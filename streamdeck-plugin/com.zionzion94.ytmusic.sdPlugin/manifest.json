@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
 	"UUID": "com.zionzion94.ytmusic",
 	"Name": "YouTube Music",
-	"Version": "1.6.0.0",
+	"Version": "1.7.0.0",
 	"Author": "ZionZion94",
 	"Description": "Contrôle l'application de bureau YouTube Music : lecture/pause, titre suivant et précédent, volume, J'aime / Je n'aime pas, titre en cours avec pochette.",
 	"Category": "YouTube Music",
@@ -92,14 +92,14 @@
 			"Name": "Volume −",
 			"UUID": "com.zionzion94.ytmusic.volumedown",
 			"Icon": "imgs/actions/volumedown/icon",
-			"Tooltip": "Baisse le volume de 5 % et l'affiche sur la touche.",
+			"Tooltip": "Baisse le volume de 5 % ; la touche affiche le volume actuel.",
 			"Controllers": [
 				"Keypad"
 			],
 			"States": [
 				{
 					"Image": "imgs/actions/volumedown/key",
-					"TitleAlignment": "bottom"
+					"ShowTitle": false
 				}
 			]
 		},
@@ -107,14 +107,14 @@
 			"Name": "Volume +",
 			"UUID": "com.zionzion94.ytmusic.volumeup",
 			"Icon": "imgs/actions/volumeup/icon",
-			"Tooltip": "Monte le volume de 5 % et l'affiche sur la touche.",
+			"Tooltip": "Monte le volume de 5 % ; la touche affiche le volume actuel.",
 			"Controllers": [
 				"Keypad"
 			],
 			"States": [
 				{
 					"Image": "imgs/actions/volumeup/key",
-					"TitleAlignment": "bottom"
+					"ShowTitle": false
 				}
 			]
 		},

@@ -58,7 +58,8 @@ Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 7 bout
 - **Lecture / Pause** — l'icône passe de ▶ à ❚❚ selon l'état réel du lecteur ;
 - **Titre précédent** ;
 - **Titre suivant** ;
-- **Volume +** / **Volume −** — par pas de 5 %, le nouveau volume s'affiche 2 secondes sur la touche ;
+- **Volume +** / **Volume −** — par pas de 5 % ; les touches affichent en permanence le volume actuel
+  (pourcentage et jauge), même quand il est changé depuis l'application ;
 - **J'aime / Je n'aime pas** (une seule touche) — appui court : J'aime ; appui long (½ s) : Je n'aime pas ;
   réappuyer annule. La touche affiche l'avis sur le titre en cours (neutre, aimé, pas aimé) ;
 - **Titre en cours** — touche dynamique : pochette, titre (qui défile s'il est trop long) et artiste ;

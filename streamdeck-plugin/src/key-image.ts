@@ -5,7 +5,7 @@
  * n'affiche pas toujours une image intégrée dans un SVG. Tout est en JavaScript pur
  * (pureimage), sans module natif.
  */
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { PassThrough, Readable } from "node:stream";
 import * as PImage from "pureimage";
 
@@ -114,4 +114,33 @@ async function encodePng(img: Bitmap): Promise<Buffer> {
 	out.on("data", (c: Buffer) => chunks.push(c));
 	await PImage.encodePNGToStream(img, out);
 	return Buffer.concat(chunks);
+}
+
+/** Décode une image PNG du plugin (chemin relatif à bin/plugin.js). */
+export async function loadPluginPng(path: string): Promise<Bitmap> {
+	return PImage.decodePNGFromStream(Readable.from([readFileSync(new URL(`../${path}`, import.meta.url))]));
+}
+
+/** Touche de volume : icône de base + pourcentage + jauge, en data URL PNG. */
+export async function renderVolumeKey(base: Bitmap, volume: number): Promise<string> {
+	const img = PImage.make(SIZE, SIZE);
+	img.data.set(base.data);
+	const ctx = img.getContext("2d");
+
+	if (hasFonts) {
+		const label = `${volume} %`;
+		ctx.font = "24px KeyBold";
+		ctx.fillStyle = "#ffffff";
+		ctx.fillText(label, (SIZE - ctx.measureText(label).width) / 2, 114);
+	}
+
+	// Jauge : fond translucide, partie remplie en blanc.
+	const x = 18;
+	const width = SIZE - 2 * x;
+	ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+	ctx.fillRect(x, 124, width, 8);
+	ctx.fillStyle = "#ffffff";
+	ctx.fillRect(x, 124, Math.round((width * Math.max(0, Math.min(100, volume))) / 100), 8);
+
+	return `data:image/png;base64,${(await encodePng(img)).toString("base64")}`;
 }
