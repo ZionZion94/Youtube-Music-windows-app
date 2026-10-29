@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
 	"UUID": "com.zionzion94.ytmusic",
 	"Name": "YouTube Music",
-	"Version": "1.2.0.0",
+	"Version": "1.2.1.0",
 	"Author": "ZionZion94",
 	"Description": "Contrôle l'application de bureau YouTube Music : lecture/pause, titre suivant et précédent, volume.",
 	"Category": "YouTube Music",
