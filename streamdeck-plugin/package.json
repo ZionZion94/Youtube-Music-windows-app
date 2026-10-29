@@ -9,7 +9,8 @@
     "pack": "npm run build && streamdeck pack com.zionzion94.ytmusic.sdPlugin --output dist --force"
   },
   "dependencies": {
-    "@elgato/streamdeck": "3.0.4"
+    "@elgato/streamdeck": "3.0.4",
+    "pureimage": "^0.4.20"
   },
   "devDependencies": {
     "@elgato/cli": "1.10.4",
