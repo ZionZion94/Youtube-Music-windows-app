@@ -195,7 +195,8 @@ fn create_main_window(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     Ok(win)
 }
 
-fn create_tray(app: &AppHandle) -> tauri::Result<()> {
+/// `api_port` : port de l'API Stream Deck, affiché dans le menu pour le diagnostic.
+fn create_tray(app: &AppHandle, api_port: Option<u16>) -> tauri::Result<()> {
     let play = MenuItem::with_id(app, "play", "Lecture / Pause", true, None::<&str>)?;
     let next = MenuItem::with_id(app, "next", "Titre suivant", true, None::<&str>)?;
     let prev = MenuItem::with_id(app, "prev", "Titre précédent", true, None::<&str>)?;
@@ -203,7 +204,15 @@ fn create_tray(app: &AppHandle) -> tauri::Result<()> {
     let quit_item = MenuItem::with_id(app, "quit", "Quitter", true, None::<&str>)?;
     let sep1 = PredefinedMenuItem::separator(app)?;
     let sep2 = PredefinedMenuItem::separator(app)?;
-    let menu = Menu::with_items(app, &[&play, &prev, &next, &sep1, &show, &sep2, &quit_item])?;
+    let api_label = match api_port {
+        Some(port) => format!("Stream Deck : prêt (port {port})"),
+        None => "Stream Deck : indisponible (aucun port libre)".to_string(),
+    };
+    let api_status = MenuItem::with_id(app, "api", api_label, false, None::<&str>)?;
+    let menu = Menu::with_items(
+        app,
+        &[&play, &prev, &next, &sep1, &show, &api_status, &sep2, &quit_item],
+    )?;
 
     TrayIconBuilder::with_id("tray")
         .icon(app.default_window_icon().unwrap().clone())
@@ -275,9 +284,9 @@ fn main() {
         .setup(|app| {
             let handle = app.handle();
             create_main_window(handle)?;
-            create_tray(handle)?;
+            let api_port = api::start(handle.clone());
+            create_tray(handle, api_port)?;
             register_media_keys(handle);
-            api::start(handle.clone());
             Ok(())
         })
         .run(tauri::generate_context!())
