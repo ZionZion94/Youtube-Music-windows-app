@@ -15,6 +15,8 @@ export type PlayerState = {
 	playing: boolean;
 	title: string;
 	artist: string;
+	/** URL de la pochette (application v1.3.0 ou plus récente). */
+	art?: string;
 	/** Volume de 0 à 100 ; `null` tant que le lecteur n'est pas prêt. */
 	volume: number | null;
 };
