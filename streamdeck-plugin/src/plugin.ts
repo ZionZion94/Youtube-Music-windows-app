@@ -1,5 +1,6 @@
 import streamDeck, { action, KeyDownEvent, SingletonAction } from "@elgato/streamdeck";
 
+import { NowPlayingAction } from "./now-playing";
 import { Command, getState, send } from "./ytmusic";
 
 /** Intervalle de rafraîchissement de l'icône Lecture/Pause. */
@@ -102,5 +103,6 @@ streamDeck.actions.registerAction(new NextAction());
 streamDeck.actions.registerAction(new PreviousAction());
 streamDeck.actions.registerAction(new VolumeUpAction());
 streamDeck.actions.registerAction(new VolumeDownAction());
+streamDeck.actions.registerAction(new NowPlayingAction());
 
 streamDeck.connect();
