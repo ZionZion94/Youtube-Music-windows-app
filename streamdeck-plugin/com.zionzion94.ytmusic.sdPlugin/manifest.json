@@ -1,0 +1,77 @@
+{
+	"$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+	"UUID": "com.zionzion94.ytmusic",
+	"Name": "YouTube Music",
+	"Version": "1.0.0.0",
+	"Author": "ZionZion94",
+	"Description": "Contrôle l'application de bureau YouTube Music : lecture/pause, titre suivant et précédent.",
+	"Category": "YouTube Music",
+	"CategoryIcon": "imgs/plugin/category-icon",
+	"Icon": "imgs/plugin/marketplace",
+	"CodePath": "bin/plugin.js",
+	"SDKVersion": 3,
+	"Software": {
+		"MinimumVersion": "7.1"
+	},
+	"OS": [
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Nodejs": {
+		"Version": "24"
+	},
+	"Actions": [
+		{
+			"Name": "Lecture / Pause",
+			"UUID": "com.zionzion94.ytmusic.playpause",
+			"Icon": "imgs/actions/playpause/icon",
+			"Tooltip": "Met en lecture ou en pause. L'icône suit l'état du lecteur.",
+			"Controllers": [
+				"Keypad"
+			],
+			"DisableAutomaticStates": true,
+			"States": [
+				{
+					"Image": "imgs/actions/playpause/play",
+					"ShowTitle": false
+				},
+				{
+					"Image": "imgs/actions/playpause/pause",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Titre précédent",
+			"UUID": "com.zionzion94.ytmusic.previous",
+			"Icon": "imgs/actions/previous/icon",
+			"Tooltip": "Revient au titre précédent.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/previous/prev",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Titre suivant",
+			"UUID": "com.zionzion94.ytmusic.next",
+			"Icon": "imgs/actions/next/icon",
+			"Tooltip": "Passe au titre suivant.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/next/next",
+					"ShowTitle": false
+				}
+			]
+		}
+	]
+}

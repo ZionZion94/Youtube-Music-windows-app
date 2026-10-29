@@ -1,6 +1,8 @@
 // Pas de console en version release.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod api;
+
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
@@ -12,6 +14,9 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 const HOME_URL: &str = "https://music.youtube.com/";
 const MAIN: &str = "main";
+const APP_TITLE: &str = "YouTube Music";
+/// Préfixe du titre de document utilisé par inject.js pour publier l'état de lecture.
+const STATE_PREFIX: &str = "YTMD:";
 
 /// Script injecté dans la page : contrôles de lecture + petites améliorations.
 const INIT_JS: &str = include_str!("inject.js");
@@ -46,7 +51,7 @@ fn main_window(app: &AppHandle) -> Option<WebviewWindow> {
     app.get_webview_window(MAIN)
 }
 
-fn run_js(app: &AppHandle, action: &str) {
+pub(crate) fn run_js(app: &AppHandle, action: &str) {
     if let Some(win) = main_window(app) {
         let _ = win.eval(&format!("window.__ytmd && window.__ytmd('{action}')"));
     }
@@ -108,16 +113,42 @@ fn set_low_memory(win: &WebviewWindow, low: bool) {
 #[cfg(not(windows))]
 fn set_low_memory(_win: &WebviewWindow, _low: bool) {}
 
+/// Reçoit l'état publié par la page : le garde pour le Stream Deck et affiche
+/// le titre en cours dans la barre des tâches et l'infobulle de l'icône.
+fn on_player_state(app: &AppHandle, win: &WebviewWindow, json: &str) {
+    let Ok(state) = serde_json::from_str::<serde_json::Value>(json) else { return };
+    api::set_state(json);
+
+    let title = state["title"].as_str().unwrap_or("");
+    let artist = state["artist"].as_str().unwrap_or("");
+    let label = match (title.is_empty(), artist.is_empty()) {
+        (true, _) => APP_TITLE.to_string(),
+        (false, true) => title.to_string(),
+        (false, false) => format!("{title} — {artist}"),
+    };
+    let _ = win.set_title(&label);
+    if let Some(tray) = app.tray_by_id("tray") {
+        // L'infobulle Windows est limitée à 127 caractères.
+        let tooltip: String = label.chars().take(120).collect();
+        let _ = tray.set_tooltip(Some(tooltip));
+    }
+}
+
 fn create_main_window(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     let handle = app.clone();
     let win = WebviewWindowBuilder::new(app, MAIN, WebviewUrl::External(HOME_URL.parse().unwrap()))
-        .title("YouTube Music")
+        .title(APP_TITLE)
         .inner_size(1280.0, 800.0)
         .min_inner_size(420.0, 320.0)
         .center()
         .visible(false)
         .additional_browser_args(BROWSER_ARGS)
         .initialization_script(INIT_JS)
+        .on_document_title_changed(|win, title| {
+            if let Some(json) = title.strip_prefix(STATE_PREFIX) {
+                on_player_state(win.app_handle(), &win, json);
+            }
+        })
         .on_navigation(move |url| {
             if is_internal(url) {
                 true
@@ -159,7 +190,7 @@ fn create_tray(app: &AppHandle) -> tauri::Result<()> {
 
     TrayIconBuilder::with_id("tray")
         .icon(app.default_window_icon().unwrap().clone())
-        .tooltip("YouTube Music")
+        .tooltip(APP_TITLE)
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
@@ -229,6 +260,7 @@ fn main() {
             create_main_window(handle)?;
             create_tray(handle)?;
             register_media_keys(handle);
+            api::start(handle.clone());
             Ok(())
         })
         .run(tauri::generate_context!())

@@ -34,6 +34,25 @@
     }
   };
 
+  // Publie l'état de lecture à l'application via le titre du document
+  // (lu par l'application pour le Stream Deck et le titre de la fenêtre).
+  function publish() {
+    var v = video();
+    var m = navigator.mediaSession && navigator.mediaSession.metadata;
+    var state = {
+      playing: !!(v && !v.paused && !v.ended),
+      title: (m && m.title) || "",
+      artist: (m && m.artist) || ""
+    };
+    var t = "YTMD:" + JSON.stringify(state);
+    if (document.title !== t) document.title = t;
+  }
+  ["play", "pause", "ended", "loadeddata"].forEach(function (name) {
+    // Les événements média ne remontent pas : on les capte en phase de capture.
+    document.addEventListener(name, function () { setTimeout(publish, 50); }, true);
+  });
+  setInterval(publish, 2000);
+
   // Ferme automatiquement la fenêtre « Vous êtes toujours là ? » qui met la musique en pause.
   setInterval(function () {
     var btn = document.querySelector("ytmusic-you-there-renderer button");
