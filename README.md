@@ -30,24 +30,37 @@ Connectez-vous une fois avec votre compte Google (YouTube Premium inclus) et la 
 
 ## Installation
 
-1. Onglet **Actions** du dépôt → dernier build « Build Windows » réussi → télécharger l'artefact
-   **YouTube-Music-Setup** (ou depuis la page **Releases** si une version `v*` a été publiée).
-2. Lancer `YouTube Music_x.y.z_x64-setup.exe` (installation pour l'utilisateur courant, sans droits admin).
-3. Se connecter à son compte Google dans l'application.
+Onglet **Actions** du dépôt → dernier build « Build Windows » réussi → section **Artifacts** :
 
-> Windows SmartScreen peut afficher un avertissement car l'exécutable n'est pas signé :
-> « Informations complémentaires » → « Exécuter quand même ».
+- **YouTube-Music-Setup** : installeur (raccourcis menu Démarrer, désinstallation propre) ;
+- **YouTube-Music-Portable** : l'application seule, sans installation — un simple `YouTube Music.exe`
+  à placer où l'on veut. Même session et mêmes réglages que la version installée.
+
+### Téléchargement ou lancement bloqué (« dangereux »)
+
+L'application n'est pas signée numériquement (un certificat de signature est payant), donc Windows et les
+navigateurs se méfient de tout `.exe` inconnu. Le code est public et compilé par GitHub Actions.
+
+- **Edge** : dans la liste des téléchargements, survoler le fichier → **⋯** → **Conserver** →
+  **Afficher plus** → **Conserver quand même**.
+- **Chrome** : dans la liste des téléchargements → **Conserver le fichier dangereux**.
+- **Au lancement** (« Windows a protégé votre ordinateur ») : **Informations complémentaires** →
+  **Exécuter quand même**.
+- **Antivirus Microsoft Defender** (« Menace détectée ») : Sécurité Windows → **Protection contre les virus
+  et menaces** → **Historique de protection** → l'élément → **Actions** → **Autoriser sur l'appareil**.
+
+La version portable déclenche moins souvent ces alertes que l'installeur.
 
 ## Plugin Stream Deck
 
-Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 8 boutons :
+Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 7 boutons :
 
 - **Lecture / Pause** — l'icône passe de ▶ à ❚❚ selon l'état réel du lecteur ;
 - **Titre précédent** ;
 - **Titre suivant** ;
 - **Volume +** / **Volume −** — par pas de 5 %, le nouveau volume s'affiche 2 secondes sur la touche ;
-- **J'aime** / **Je n'aime pas** — la touche s'allume en rouge selon l'avis sur le titre en cours ;
-  réappuyer annule ;
+- **J'aime / Je n'aime pas** (une seule touche) — appui court : J'aime ; appui long (½ s) : Je n'aime pas ;
+  réappuyer annule. La touche affiche l'avis sur le titre en cours (neutre, aimé, pas aimé) ;
 - **Titre en cours** — touche dynamique : pochette, titre (qui défile s'il est trop long) et artiste ;
   un appui met en lecture / en pause.
 
