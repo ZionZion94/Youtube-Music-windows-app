@@ -22,6 +22,8 @@ Connectez-vous une fois avec votre compte Google (YouTube Premium inclus) et la 
 - Une seule instance : relancer l'application ramène la fenêtre existante.
 - Fermeture automatique du message « Vous êtes toujours là ? » qui coupe la musique.
 - Les liens externes s'ouvrent dans votre navigateur par défaut.
+- Le titre en cours s'affiche dans la barre des tâches et l'infobulle de l'icône.
+- **Plugin Stream Deck** : boutons Lecture/Pause, Titre suivant, Titre précédent (voir plus bas).
 
 ## Installation
 
@@ -32,6 +34,27 @@ Connectez-vous une fois avec votre compte Google (YouTube Premium inclus) et la 
 
 > Windows SmartScreen peut afficher un avertissement car l'exécutable n'est pas signé :
 > « Informations complémentaires » → « Exécuter quand même ».
+
+## Plugin Stream Deck
+
+Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 3 boutons :
+
+- **Lecture / Pause** — l'icône passe de ▶ à ❚❚ selon l'état réel du lecteur ;
+- **Titre précédent** ;
+- **Titre suivant**.
+
+Si l'application n'est pas lancée, la touche affiche un triangle jaune.
+
+**Installation** (Stream Deck 7.1 ou plus récent) :
+
+1. Onglet **Actions** → dernier build réussi → télécharger l'artefact **StreamDeck-Plugin** et le décompresser.
+2. Double-cliquer sur `com.zionzion94.ytmusic.streamDeckPlugin` : le logiciel Stream Deck l'installe.
+3. Glisser les boutons de la catégorie **YouTube Music** sur vos touches.
+
+L'application YouTube Music doit être en version 1.1.0 ou plus récente. Elle expose pour cela une petite
+API locale sur `127.0.0.1:48723`, inaccessible depuis le réseau et depuis les sites web.
+
+Pour compiler le plugin : `cd streamdeck-plugin && npm ci && npm run pack` (résultat dans `streamdeck-plugin/dist/`).
 
 ## Compiler soi-même
 
@@ -49,4 +72,6 @@ npx @tauri-apps/cli@2 build   # créer l'installeur dans src-tauri\target\releas
 |---|---|
 | `src-tauri/src/main.rs` | Fenêtre, icône de notification, touches multimédia, gestion mémoire |
 | `src-tauri/src/inject.js` | Script injecté dans YouTube Music (contrôles de lecture, petites améliorations) |
+| `src-tauri/src/api.rs` | API locale utilisée par le plugin Stream Deck |
 | `src-tauri/tauri.conf.json` | Configuration de l'application et de l'installeur |
+| `streamdeck-plugin/` | Plugin Stream Deck (code dans `src/`, manifeste et icônes dans `com.zionzion94.ytmusic.sdPlugin/`) |
