@@ -5,12 +5,14 @@
 //! sans autorisation CORS (que l'on ne donne jamais), il ne peut donc pas
 //! piloter la musique à votre place.
 //!
-//! - `GET  /state`  → `{"playing":true,"title":"…","artist":"…","art":"https://…","volume":50}`
+//! - `GET  /state`  → `{"playing":true,"title":"…","artist":"…","art":"https://…","like":"LIKE","volume":50}`
 //! - `POST /toggle` → lecture / pause
 //! - `POST /next`   → titre suivant
 //! - `POST /prev`   → titre précédent
 //! - `POST /volup`  → volume +5 %
 //! - `POST /voldown`→ volume -5 %
+//! - `POST /like`   → J'aime (ou l'annule)
+//! - `POST /dislike`→ Je n'aime pas (ou l'annule)
 //!
 //! Le port par défaut est 48723. S'il est occupé ou réservé par Windows (WSL,
 //! Docker, Hyper-V réservent des plages de ports), les ports suivants sont
@@ -101,6 +103,8 @@ fn handle(app: &AppHandle, mut stream: TcpStream) -> std::io::Result<()> {
             ("POST", "/prev") => command(app, "prev"),
             ("POST", "/volup") => command(app, "volup"),
             ("POST", "/voldown") => command(app, "voldown"),
+            ("POST", "/like") => command(app, "like"),
+            ("POST", "/dislike") => command(app, "dislike"),
             _ => ("404 Not Found", String::new()),
         }
     };
