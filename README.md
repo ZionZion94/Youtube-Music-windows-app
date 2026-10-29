@@ -46,7 +46,9 @@ Ajoute une catégorie **YouTube Music** dans le logiciel Stream Deck avec 5 bout
 - **Titre suivant** ;
 - **Volume +** / **Volume −** — par pas de 5 %, le nouveau volume s'affiche 2 secondes sur la touche.
 
-Si l'application n'est pas lancée, la touche affiche un triangle jaune.
+Si l'application n'est pas lancée, la touche affiche un triangle jaune. Le menu de l'icône de l'application
+indique « Stream Deck : prêt (port …) » quand la liaison est disponible ; la cause d'un échec est écrite dans
+`%APPDATA%\Elgato\StreamDeck\Plugins\com.zionzion94.ytmusic.sdPlugin\logs`.
 
 **Installation** (Stream Deck 7.1 ou plus récent) :
 
@@ -55,7 +57,8 @@ Si l'application n'est pas lancée, la touche affiche un triangle jaune.
 3. Glisser les boutons de la catégorie **YouTube Music** sur vos touches.
 
 L'application YouTube Music doit être en version 1.2.0 ou plus récente (1.1.0 sans les boutons de volume). Elle expose pour cela une petite
-API locale sur `127.0.0.1:48723`, inaccessible depuis le réseau et depuis les sites web.
+API locale sur `127.0.0.1:48723` (ou un port suivant s'il est réservé par Windows), inaccessible depuis le réseau
+et depuis les sites web.
 
 Pour compiler le plugin : `cd streamdeck-plugin && npm ci && npm run pack` (résultat dans `streamdeck-plugin/dist/`).
 

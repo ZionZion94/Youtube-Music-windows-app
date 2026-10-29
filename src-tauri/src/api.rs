@@ -11,15 +11,22 @@
 //! - `POST /prev`   → titre précédent
 //! - `POST /volup`  → volume +5 %
 //! - `POST /voldown`→ volume -5 %
+//!
+//! Le port par défaut est 48723. S'il est occupé ou réservé par Windows (WSL,
+//! Docker, Hyper-V réservent des plages de ports), les ports suivants sont
+//! essayés. Le port retenu est écrit dans `%APPDATA%\com.zionzion94.ytmusic\api-port`,
+//! que le plugin Stream Deck lit pour savoir où se connecter.
 
 use std::io::{BufRead, BufReader, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::Mutex;
 use std::time::Duration;
 
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 
-pub const PORT: u16 = 48723;
+const FIRST_PORT: u16 = 48723;
+const PORT_ATTEMPTS: u16 = 20;
+const PORT_FILE: &str = "api-port";
 
 /// Dernier état publié par la page (JSON).
 static STATE: Mutex<String> = Mutex::new(String::new());
@@ -38,17 +45,23 @@ fn state() -> String {
     }
 }
 
-pub fn start(app: AppHandle) {
-    let listener = match TcpListener::bind(("127.0.0.1", PORT)) {
-        Ok(l) => l,
-        // Port déjà utilisé : l'application fonctionne normalement, sans Stream Deck.
-        Err(_) => return,
-    };
+/// Démarre le serveur ; renvoie le port utilisé, ou `None` si aucun port n'est disponible
+/// (l'application fonctionne alors normalement, sans Stream Deck).
+pub fn start(app: AppHandle) -> Option<u16> {
+    let (listener, port) = (FIRST_PORT..FIRST_PORT + PORT_ATTEMPTS)
+        .find_map(|port| TcpListener::bind(("127.0.0.1", port)).ok().map(|l| (l, port)))?;
+
+    if let Ok(dir) = app.path().app_data_dir() {
+        let _ = std::fs::create_dir_all(&dir);
+        let _ = std::fs::write(dir.join(PORT_FILE), port.to_string());
+    }
+
     std::thread::spawn(move || {
         for stream in listener.incoming().flatten() {
             let _ = handle(&app, stream);
         }
     });
+    Some(port)
 }
 
 fn handle(app: &AppHandle, mut stream: TcpStream) -> std::io::Result<()> {

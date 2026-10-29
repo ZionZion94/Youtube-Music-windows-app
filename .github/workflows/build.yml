@@ -56,6 +56,14 @@ jobs:
       - run: npm run typecheck
       - run: npm run pack
 
+      # Le plugin doit se charger sans planter (sans Stream Deck, il s'arrête proprement).
+      - name: Smoke test
+        run: |
+          set +e
+          timeout 5 node com.zionzion94.ytmusic.sdPlugin/bin/plugin.js
+          code=$?
+          if [ $code -ne 0 ] && [ $code -ne 124 ]; then echo "Le plugin a planté (code $code)"; exit 1; fi
+
       - name: Upload plugin
         uses: actions/upload-artifact@v4
         with:
