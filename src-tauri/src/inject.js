@@ -50,6 +50,10 @@
           if (v) v.paused ? v.play() : v.pause();
         }
         break;
+      case "play":
+        var pl = video();
+        if (pl && pl.paused) window.__ytmd("toggle");
+        break;
       case "pause":
         var p = video();
         if (p && !p.paused) p.pause();
@@ -61,10 +65,10 @@
         click("ytmusic-player-bar .previous-button");
         break;
       case "volup":
-        changeVolume(10);
+        changeVolume(5);
         break;
       case "voldown":
-        changeVolume(-10);
+        changeVolume(-5);
         break;
     }
   };
@@ -74,10 +78,13 @@
   function publish() {
     var v = video();
     var m = navigator.mediaSession && navigator.mediaSession.metadata;
+    // Pochette : la plus grande image proposée (dernière de la liste).
+    var art = m && m.artwork && m.artwork.length ? m.artwork[m.artwork.length - 1].src : "";
     var state = {
       playing: !!(v && !v.paused && !v.ended),
       title: (m && m.title) || "",
       artist: (m && m.artist) || "",
+      art: art,
       volume: volume()
     };
     var t = "YTMD:" + JSON.stringify(state);
