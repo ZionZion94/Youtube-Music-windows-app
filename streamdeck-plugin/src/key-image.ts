@@ -121,26 +121,52 @@ export async function loadPluginPng(path: string): Promise<Bitmap> {
 	return PImage.decodePNGFromStream(Readable.from([readFileSync(new URL(`../${path}`, import.meta.url))]));
 }
 
-/** Touche de volume : icône de base + pourcentage + jauge, en data URL PNG. */
+/** Hauteur réservée à l'icône (tiers supérieur) ; le volume occupe les deux tiers restants. */
+const ICON_HEIGHT = SIZE / 3;
+const GAUGE_Y = 128;
+const GAUGE_HEIGHT = 6;
+
+/**
+ * Touche de volume : fond avec petite icône dans le tiers supérieur, volume en grand
+ * (« 60 » et un « % » plus petit) et une fine jauge dans les deux tiers inférieurs.
+ */
 export async function renderVolumeKey(base: Bitmap, volume: number): Promise<string> {
 	const img = PImage.make(SIZE, SIZE);
 	img.data.set(base.data);
 	const ctx = img.getContext("2d");
+	const level = Math.max(0, Math.min(100, Math.round(volume)));
 
 	if (hasFonts) {
-		const label = `${volume} %`;
-		ctx.font = "24px KeyBold";
+		// Taille du nombre : la plus grande qui tient en largeur (« 100 % » compris).
+		const number = String(level);
+		let size = 60;
+		const width = (s: number): number => {
+			ctx.font = `${s}px KeyBold`;
+			const n = ctx.measureText(number).width;
+			ctx.font = `${Math.round(s / 2)}px KeyBold`;
+			return n + 3 + ctx.measureText("%").width;
+		};
+		while (size > 20 && width(size) > SIZE - 12) size -= 2;
+
+		const total = width(size);
+		const x = (SIZE - total) / 2;
+		// Centre vertical de la zone entre l'icône et la jauge ; la hauteur des chiffres ≈ 0,72 × taille.
+		const baseline = Math.round((ICON_HEIGHT + GAUGE_Y) / 2 + size * 0.36);
 		ctx.fillStyle = "#ffffff";
-		ctx.fillText(label, (SIZE - ctx.measureText(label).width) / 2, 114);
+		ctx.font = `${size}px KeyBold`;
+		ctx.fillText(number, x, baseline);
+		const numberWidth = ctx.measureText(number).width;
+		ctx.font = `${Math.round(size / 2)}px KeyBold`;
+		ctx.fillText("%", x + numberWidth + 3, baseline);
 	}
 
 	// Jauge : fond translucide, partie remplie en blanc.
-	const x = 18;
-	const width = SIZE - 2 * x;
+	const gx = 16;
+	const gw = SIZE - 2 * gx;
 	ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
-	ctx.fillRect(x, 124, width, 8);
+	ctx.fillRect(gx, GAUGE_Y, gw, GAUGE_HEIGHT);
 	ctx.fillStyle = "#ffffff";
-	ctx.fillRect(x, 124, Math.round((width * Math.max(0, Math.min(100, volume))) / 100), 8);
+	ctx.fillRect(gx, GAUGE_Y, Math.round((gw * level) / 100), GAUGE_HEIGHT);
 
 	return `data:image/png;base64,${(await encodePng(img)).toString("base64")}`;
 }

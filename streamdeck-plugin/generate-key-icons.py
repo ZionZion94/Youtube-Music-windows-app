@@ -25,17 +25,18 @@ def glyph(d, kind, cx, cy, r, color):
         d.rectangle((sx-L, cy-t, sx+L, cy+t), fill=color)
         if kind=="volup": d.rectangle((sx-t, cy-L, sx+t, cy+L), fill=color)
 
-def key(kind):
+def key(kind, small=False):
     # Dégradé vertical rouge sur toute la touche.
     img=Image.new("RGBA",(S,S))
     d=ImageDraw.Draw(img)
     for y in range(S):
         k=y/(S-1)
         d.line([(0,y),(S,y)],fill=tuple(int(a+(b-a)*k) for a,b in zip(RED_TOP,RED_BOTTOM))+(255,))
-    # Les boutons de volume affichent le pourcentage et une jauge en bas : symbole remonté.
-    cy=S*0.36 if kind.startswith("vol") else S/2
+    # Fond des touches de volume : petite icône dans le tiers supérieur, le plugin dessine
+    # le volume dans les deux tiers restants. Sinon (image par défaut) : grande icône.
+    cy=S/6 if small else S*0.36 if kind.startswith("vol") else S/2
     dx=S*0.03 if kind=="play" else 0
-    r=S*0.27 if kind.startswith("vol") else S*0.24
+    r=S*0.12 if small else S*0.27 if kind.startswith("vol") else S*0.24
     glyph(d,kind,S/2+dx,cy,r,WHITE)
     return img
 
@@ -48,6 +49,8 @@ files={"play":"playpause/play","pause":"playpause/pause","prev":"previous/prev",
        "voldown":"volumedown/key","volup":"volumeup/key"}
 for kind,path in files.items():
     save(key(kind),f"imgs/actions/{path}")
+for kind,folder in (("voldown","volumedown"),("volup","volumeup")):
+    save(key(kind, small=True),f"imgs/actions/{folder}/base")
 
 if len(sys.argv) < 2:
     sys.exit(0)

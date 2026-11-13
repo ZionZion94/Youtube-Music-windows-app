@@ -12,7 +12,7 @@ const POLL_MS = 1000;
  */
 abstract class VolumeAction extends SingletonAction {
 	protected abstract readonly command: Command;
-	/** Image de base de la touche (dans imgs/actions/…), sur laquelle on dessine le volume. */
+	/** Fond de la touche (petite icône en haut, dans imgs/actions/…), sur lequel on dessine le volume. */
 	protected abstract readonly baseImage: string;
 
 	#base: ReturnType<typeof loadPluginPng> | undefined;
@@ -56,11 +56,11 @@ abstract class VolumeAction extends SingletonAction {
 @action({ UUID: "com.zionzion94.ytmusic.volumeup" })
 export class VolumeUpAction extends VolumeAction {
 	protected readonly command = "volup";
-	protected readonly baseImage = "imgs/actions/volumeup/key@2x.png";
+	protected readonly baseImage = "imgs/actions/volumeup/base@2x.png";
 }
 
 @action({ UUID: "com.zionzion94.ytmusic.volumedown" })
 export class VolumeDownAction extends VolumeAction {
 	protected readonly command = "voldown";
-	protected readonly baseImage = "imgs/actions/volumedown/key@2x.png";
+	protected readonly baseImage = "imgs/actions/volumedown/base@2x.png";
 }
